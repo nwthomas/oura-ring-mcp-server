@@ -1,8 +1,8 @@
 # Oura Ring MCP Server
 
-A model context protocol (MCP) implementation wrapping calls to the Oura Ring API.
+A Model Context Protocol (MCP) implementation wrapping calls to the Oura Ring API.
 
-## Oura Ring API Notes
+## Oura Ring API
 
 Oura Ring limits users to 5,000 requests per 5 minute period, but they say they have not had any users hit rate limits with webhook properly implemented.
 

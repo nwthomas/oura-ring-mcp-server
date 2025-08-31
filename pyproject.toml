@@ -1,7 +1,7 @@
 [project]
-name = "oura-ring-mcp-2"
+name = "oura-ring-mcp"
 version = "0.1.0"
-description = "Add your description here"
+description = "An MCP server for the Oura Ring API"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = []
