@@ -2,6 +2,7 @@
 __pycache__/
 *.py[codz]
 *$py.class
+*.py[oc]
 
 # C extensions
 *.so
@@ -18,8 +19,8 @@ lib/
 lib64/
 parts/
 sdist/
+dist/
 var/
-wheels/
 share/python-wheels/
 *.egg-info/
 .installed.cfg
