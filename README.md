@@ -4,7 +4,7 @@ A Model Context Protocol (MCP) implementation wrapping calls to the Oura Ring AP
 
 ## Setup
 
-First, you'll need to ensure that you have `uv` and the right `python` versions.
+First, you'll need to ensure that you have `uv` and the right Python versions.
 
 Run these commands (assuming you don't already have them installed):
 
@@ -64,7 +64,8 @@ Different data has different sync policies for them:
 
 In order to use this MCP server, you will need to register with the Oura Ring developer portal and get your own keys to plug into a `.env` file (copied over from the `.env.example`).
 
-## References
+## Resources
 
 - [Model Context Protocol overview](https://modelcontextprotocol.io/docs/getting-started/intro), [architecture concepts](https://modelcontextprotocol.io/docs/learn/architecture), and [MCP server concepts](https://modelcontextprotocol.io/docs/learn/server-concepts)
+- [Model Context Protocol Github repository](https://github.com/modelcontextprotocol)
 - [Oura Ring API Documentation](https://cloud.ouraring.com/v2/docs)

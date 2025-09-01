@@ -10,17 +10,12 @@
 #     import uvicorn
 #     uvicorn.run(app, host="0.0.0.0", port=8000)
 
-"""
-FastMCP quickstart example.
-
-cd to the `examples/snippets/clients` directory and run:
-    uv run server fastmcp_quickstart stdio
-"""
-
 from mcp.server.fastmcp import FastMCP
 
+OURA_RING_MCP_SERVER_NAME = "Oura Ring MCP Server"
+
 # Create an MCP server
-mcp = FastMCP("Demo")
+mcp = FastMCP(OURA_RING_MCP_SERVER_NAME)
 
 
 # Add an addition tool
