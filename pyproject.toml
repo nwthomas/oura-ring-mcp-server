@@ -1,7 +1,10 @@
 [project]
 name = "oura-ring-mcp"
 version = "0.1.0"
-description = "An MCP server for the Oura Ring API"
+description = "A MCP server for the Oura Ring API"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "fastapi>=0.116.1",
+    "uvicorn>=0.35.0",
+]
