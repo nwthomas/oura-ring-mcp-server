@@ -1,17 +1,12 @@
 clean:
 	uv sync --clean
-	uv run build --clean
-	uv run test --clean
 
 build:
-	uv sync
-	uv run build
-
-env:
-	uv venv
+	make sync
+	uv run python -m build
 
 run:
-	uvicorn main:app --reload
+	uv run uvicorn main:app --reload
 
 sync:
 	uv sync
