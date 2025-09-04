@@ -1,45 +1,11 @@
-# from fastapi import FastAPI
-
-# app = FastAPI()
-
-# @app.get("/")
-# async def root():
-#     return {"message": "Hello, Oura Ring MCP!"}
-
-# if __name__ == "__main__":
-#     import uvicorn
-#     uvicorn.run(app, host="0.0.0.0", port=8000)
-
 from mcp.server.fastmcp import FastMCP
+from src import SERVER_NAME
 
-OURA_RING_MCP_SERVER_NAME = "Oura Ring MCP Server"
+mcp = FastMCP(SERVER_NAME)
 
-# Create an MCP server
-mcp = FastMCP(OURA_RING_MCP_SERVER_NAME)
+# Constants
+NWS_API_BASE = "https://api.weather.gov"
+USER_AGENT = "weather-app/1.0"
 
-
-# Add an addition tool
-@mcp.tool()
-def add(a: int, b: int) -> int:
-    """Add two numbers"""
-    return a + b
-
-
-# Add a dynamic greeting resource
-@mcp.resource("greeting://{name}")
-def get_greeting(name: str) -> str:
-    """Get a personalized greeting"""
-    return f"Hello, {name}!"
-
-
-# Add a prompt
-@mcp.prompt()
-def greet_user(name: str, style: str = "friendly") -> str:
-    """Generate a greeting prompt"""
-    styles = {
-        "friendly": "Please write a warm, friendly greeting",
-        "formal": "Please write a formal, professional greeting",
-        "casual": "Please write a casual, relaxed greeting",
-    }
-
-    return f"{styles.get(style, styles['friendly'])} for someone named {name}."
+if __name__ == "__main__":
+    mcp.run(transport='stdio')

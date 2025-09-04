@@ -1,0 +1,1 @@
+SERVER_NAME = "oura-ring-mcp-server"

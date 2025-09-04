@@ -1,15 +1,15 @@
-clean:
-	uv sync --clean
-
-build:
-	make sync
-	uv run python -m build
+nuke:
+	uv cache clean
 
 run:
-	uv run uvicorn main:app --reload
+	uv run main.py
 
 sync:
-	uv sync
+	uv sync --reinstall
 
 test:
 	uv run pytest
+
+venv:
+	# NOTE: source .venv/bin/activate must be run manually after this command
+	uv venv

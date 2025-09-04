@@ -39,6 +39,13 @@ pyenv version
 Next, you'll need to setup the environment for this repository and install dependencies. You can do that with these commands (assuming you already completed the above Python version and `uv` install process):
 
 ```sh
+# Setup virtual environment
+make venv
+
+# Start the virtual environment
+source .venv/bin/activate
+
+# Synchronize dependencies
 make sync
 ```
 
