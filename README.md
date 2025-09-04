@@ -1,3 +1,5 @@
+> NOTE: This repository is in draft. I'm actively wiring it up with new routes moving to completion as a working MCP server. However, I like to build in public and so have made it a public repository.
+
 # Oura Ring MCP Server
 
 A Model Context Protocol (MCP) implementation wrapping calls to the Oura Ring API.
@@ -55,6 +57,8 @@ Finally, you can run the project with the following command:
 make run
 ```
 
+However, this MCP server will likely be access locally. I will eventually wire up a Docker build process, but you can follow the [Anthropic local MCP server](https://modelcontextprotocol.io/quickstart/user) setup options until then to run it locally. It will integrate with any LLM that has MCP client wrappers setup.
+
 ## Built With
 
 - [FastAPI](https://fastapi.tiangolo.com/)
@@ -70,6 +74,8 @@ Different data has different sync policies for them:
 - Daily activity and stress, for instance, sync in the background
 
 In order to use this MCP server, you will need to register with the Oura Ring developer portal and get your own keys to plug into a `.env` file (copied over from the `.env.example`).
+
+TODO: Finish filling out details about the Oura Ring API
 
 ## Oura Ring Data Model
 
