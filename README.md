@@ -71,6 +71,10 @@ Different data has different sync policies for them:
 
 In order to use this MCP server, you will need to register with the Oura Ring developer portal and get your own keys to plug into a `.env` file (copied over from the `.env.example`).
 
+## Oura Ring Data Model
+
+TODO: https://cloud.ouraring.com/v2/docs#tag/Data-Model-and-Concepts
+
 ## Resources
 
 - [Model Context Protocol overview](https://modelcontextprotocol.io/docs/getting-started/intro), [architecture concepts](https://modelcontextprotocol.io/docs/learn/architecture), and [MCP server concepts](https://modelcontextprotocol.io/docs/learn/server-concepts)
