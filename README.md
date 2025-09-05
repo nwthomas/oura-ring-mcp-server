@@ -1,4 +1,4 @@
-> NOTE: This repository is in draft. I'm actively wiring it up with new routes moving to completion as a working MCP server. However, I like to build in public and so have made it a public repository.
+> NOTE: This repository is in draft as I'm finishing sections like testing. I'm actively wiring it up with new routes moving to completion as a working MCP server. However, I like to build in public and so have made it a public repository.
 
 # Oura Ring MCP Server
 

@@ -98,9 +98,49 @@ async def get_oura_ring_personal_information() -> dict[str, Any]:
     url = f"{OURA_RING_API_BASE}/v2/usercollection/personal_info"
     return await make_oura_ring_request(url)
 
-async def get_oura_ring_sleep_routes(start_date: str, end_date: str, next_token: str | None = None) -> dict[str, Any]:
+async def get_oura_ring_multiple_session_routes(start_date: str, end_date: str, next_token: str | None = None) -> dict[str, Any]:
+    """Get session routes for a given date range."""
+    url = f"{OURA_RING_API_BASE}/v2/usercollection/session"
+    params = build_oura_ring_request_params({
+        "start_date": start_date,
+        "end_date": end_date,
+        "next_token": next_token,
+    })
+    return await make_oura_ring_request(url, params)
+
+async def get_oura_ring_multiple_sleep_routes(start_date: str, end_date: str, next_token: str | None = None) -> dict[str, Any]:
     """Get sleep routes for a given date range."""
     url = f"{OURA_RING_API_BASE}/v2/usercollection/sleep"
+    params = build_oura_ring_request_params({
+        "start_date": start_date,
+        "end_date": end_date,
+        "next_token": next_token,
+    })
+    return await make_oura_ring_request(url, params)
+
+async def get_oura_ring_multiple_sleep_time(start_date: str, end_date: str, next_token: str | None = None) -> dict[str, Any]:
+    """Get sleep time for a given date range."""
+    url = f"{OURA_RING_API_BASE}/v2/usercollection/sleep_time"
+    params = build_oura_ring_request_params({
+        "start_date": start_date,
+        "end_date": end_date,
+        "next_token": next_token,
+    })
+    return await make_oura_ring_request(url, params)
+
+async def get_oura_ring_multiple_vo2_max(start_date: str, end_date: str, next_token: str | None = None) -> dict[str, Any]:
+    """Get vo2 max for a given date range."""
+    url = f"{OURA_RING_API_BASE}/v2/usercollection/vo2_max"
+    params = build_oura_ring_request_params({
+        "start_date": start_date,
+        "end_date": end_date,
+        "next_token": next_token,
+    })
+    return await make_oura_ring_request(url, params)
+
+async def get_oura_ring_multiple_workout(start_date: str, end_date: str, next_token: str | None = None) -> dict[str, Any]:
+    """Get workout for a given date range."""
+    url = f"{OURA_RING_API_BASE}/v2/usercollection/workout"
     params = build_oura_ring_request_params({
         "start_date": start_date,
         "end_date": end_date,

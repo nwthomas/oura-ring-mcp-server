@@ -11,8 +11,12 @@ from ..oura_ring.routes import (
     get_our_ring_multiple_daily_stress,
     get_oura_ring_multiple_enhanced_tags,
     get_oura_ring_multiple_heart_rate,
+    get_oura_ring_multiple_sleep_routes,
+    get_oura_ring_multiple_session_routes,
     get_oura_ring_personal_information,
-    get_oura_ring_sleep_routes
+    get_oura_ring_multiple_sleep_time,
+    get_oura_ring_multiple_vo2_max,
+    get_oura_ring_multiple_workout,
 )
 
 mcp = FastMCP(name=SERVER_NAME)
@@ -149,6 +153,20 @@ async def get_personal_information() -> dict[str, Any]:
     return await get_oura_ring_personal_information()
 
 @mcp.tool()
+async def get_session_routes(start_date: str, end_date: str, next_token: str | None = None) -> dict[str, Any]:
+    """Get the session data for a given date range. A user can have multiple sessions per day.
+    
+    Args:
+        start_date: The start date of the date range. Must be in YYYY-MM-DD format.
+        end_date: The end date of the date range. Must be in YYYY-MM-DD format.
+        next_token: The next token to use for pagination from a previous request
+        
+    Returns:
+        The session routes for each day in a given date range.
+    """
+    return await get_oura_ring_multiple_session_routes(start_date, end_date, next_token)
+
+@mcp.tool()
 async def get_sleep_routes(start_date: str, end_date: str, next_token: str | None = None) -> dict[str, Any]:
     """Get the sleep data for a given date range. A user can have multiple sleep periods per day.
     
@@ -160,7 +178,49 @@ async def get_sleep_routes(start_date: str, end_date: str, next_token: str | Non
     Returns:
         The sleep routes for each day in a given date range.
     """
-    return await get_oura_ring_sleep_routes(start_date, end_date, next_token)
+    return await get_oura_ring_multiple_sleep_routes(start_date, end_date, next_token)
+
+@mcp.tool()
+async def get_sleep_time(start_date: str, end_date: str, next_token: str | None = None) -> dict[str, Any]:
+    """Get the sleep times for a given date range. This includes recommendations for the optimal bedtime window that is calculated based on sleep data.
+    
+    Args:
+        start_date: The start date of the date range. Must be in YYYY-MM-DD format.
+        end_date: The end date of the date range. Must be in YYYY-MM-DD format.
+        next_token: The next token to use for pagination from a previous request
+        
+    Returns:
+        The sleep time for each day in a given date range.
+    """
+    return await get_oura_ring_multiple_sleep_time(start_date, end_date, next_token)
+
+@mcp.tool()
+async def get_vo2_max(start_date: str, end_date: str, next_token: str | None = None) -> dict[str, Any]:
+    """Get the vo2 max for a given date range.
+    
+    Args:
+        start_date: The start date of the date range. Must be in YYYY-MM-DD format.
+        end_date: The end date of the date range. Must be in YYYY-MM-DD format.
+        next_token: The next token to use for pagination from a previous request
+        
+    Returns:
+        The vo2 max for each day in a given date range.
+    """
+    return await get_oura_ring_multiple_vo2_max(start_date, end_date, next_token)
+
+@mcp.tool()
+async def get_workout(start_date: str, end_date: str, next_token: str | None = None) -> dict[str, Any]:
+    """Get the workout for a given date range.
+    
+    Args:
+        start_date: The start date of the date range. Must be in YYYY-MM-DD format.
+        end_date: The end date of the date range. Must be in YYYY-MM-DD format.
+        next_token: The next token to use for pagination from a previous request
+        
+    Returns:
+        The workout for each day in a given date range.
+    """
+    return await get_oura_ring_multiple_workout(start_date, end_date, next_token)
 
 def start_server():
     print(f"Starting {SERVER_NAME}")
