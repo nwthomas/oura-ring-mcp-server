@@ -59,9 +59,14 @@ make run
 
 However, this MCP server will likely be access locally. I will eventually wire up a Docker build process, but you can follow the [Anthropic local MCP server](https://modelcontextprotocol.io/quickstart/user) setup options until then to run it locally. It will integrate with any LLM that has MCP client wrappers setup.
 
+If you want to exit the virtual environment, just run:
+
+```sh
+deactivate
+```
+
 ## Built With
 
-- [FastAPI](https://fastapi.tiangolo.com/)
 - [MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk)
 - [uv](https://github.com/astral-sh/uv)
 
