@@ -62,3 +62,23 @@ async def get_oura_ring_multiple_daily_spo2(start_date: str, end_date: str, next
         "next_token": next_token,
     })
     return await make_oura_ring_request(url, params)
+
+async def get_our_ring_multiple_daily_stress(start_date: str, end_date: str, next_token: str | None = None) -> dict[str, Any]:
+    """Get multiple daily stress values for a given date range."""
+    url = f"{OURA_RING_API_BASE}/v2/usercollection/daily_stress"
+    params = build_oura_ring_request_params({
+        "start_date": start_date,
+        "end_date": end_date,
+        "next_token": next_token,
+    })
+    return await make_oura_ring_request(url, params)
+
+async def get_oura_ring_multiple_enhanced_tags(start_date: str, end_date: str, next_token: str | None = None) -> dict[str, Any]:
+    """Get multiple daily enhanced tags for a given date range."""
+    url = f"{OURA_RING_API_BASE}/v2/usercollection/daily_enhanced_tags"
+    params = build_oura_ring_request_params({
+        "start_date": start_date,
+        "end_date": end_date,
+        "next_token": next_token,
+    })
+    return await make_oura_ring_request(url, params)

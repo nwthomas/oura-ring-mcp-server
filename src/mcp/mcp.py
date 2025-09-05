@@ -1,7 +1,7 @@
 from mcp.server.fastmcp import FastMCP
 from .constants import SERVER_NAME
 from typing import Any
-from ..oura_ring.routes import get_oura_ring_daily_cardiovascular_age, get_oura_ring_multiple_daily_activity, get_oura_ring_multiple_daily_readiness, get_oura_ring_multiple_daily_resilience
+from ..oura_ring.routes import get_oura_ring_daily_cardiovascular_age, get_oura_ring_multiple_daily_activity, get_oura_ring_multiple_daily_readiness, get_oura_ring_multiple_daily_resilience, get_oura_ring_multiple_daily_sleep, get_oura_ring_multiple_daily_spo2, get_our_ring_multiple_daily_stress, get_oura_ring_multiple_enhanced_tags
 
 mcp = FastMCP(name=SERVER_NAME)
 
@@ -77,7 +77,7 @@ async def get_multiple_daily_sleep(start_date: str, end_date: str, next_token: s
 
 @mcp.tool()
 async def get_multiple_daily_spo2(start_date: str, end_date: str, next_token: str | None = None) -> dict[str, Any]:
-    """Get the multiple daily spo2 values for a given date range.
+    """Get the multiple daily spO2 values for a given date range. SpO2 is the oxygen saturation in the blood.
     
     Args:
         start_date: The start date of the date range. Must be in YYYY-MM-DD format.
@@ -88,6 +88,34 @@ async def get_multiple_daily_spo2(start_date: str, end_date: str, next_token: st
         The multiple daily spo2 values for each day in a given date range.
     """
     return await get_oura_ring_multiple_daily_spo2(start_date, end_date, next_token)
+
+@mcp.tool()
+async def get_multiple_daily_stress(start_date: str, end_date: str, next_token: str | None = None) -> dict[str, Any]:
+    """Get the multiple daily stress values for a given date range.
+    
+    Args:
+        start_date: The start date of the date range. Must be in YYYY-MM-DD format.
+        end_date: The end date of the date range. Must be in YYYY-MM-DD format.
+        next_token: The next token to use for pagination from a previous request
+        
+    Returns:
+        The multiple daily stress values for each day in a given date range.
+    """
+    return await get_our_ring_multiple_daily_stress(start_date, end_date, next_token)
+
+@mcp.tool()
+async def get_multiple_daily_enhanced_tags(start_date: str, end_date: str, next_token: str | None = None) -> dict[str, Any]:
+    """Get the multiple daily enhanced tags for a given date range.
+    
+    Args:
+        start_date: The start date of the date range. Must be in YYYY-MM-DD format.
+        end_date: The end date of the date range. Must be in YYYY-MM-DD format.
+        next_token: The next token to use for pagination from a previous request
+        
+    Returns:
+        The multiple daily enhanced tags for each day in a given date range.
+    """
+    return await get_oura_ring_multiple_enhanced_tags(start_date, end_date, next_token)
 
 def start_server():
     print(f"Starting {SERVER_NAME}")

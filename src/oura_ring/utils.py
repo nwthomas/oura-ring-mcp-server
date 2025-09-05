@@ -1,4 +1,9 @@
+from httpx import AsyncClient
+from typing import Any
+from .constants import OURA_RING_PERSONAL_ACCESS_TOKEN, SERVER_USER_AGENT, SERVER_TIMEOUT_SECONDS
+
 def build_oura_ring_request_headers() -> dict[str, str]:
+    """Builds request headers for Oura Ring API requests."""
     return {
         "Accept": "application/json",
         "Authorization": f"Bearer {OURA_RING_PERSONAL_ACCESS_TOKEN}",
@@ -6,7 +11,7 @@ def build_oura_ring_request_headers() -> dict[str, str]:
     }
 
 def build_oura_ring_request_params(params: dict[str, Any]) -> dict[str, Any]:
-    """builds request params for Oura Ring API requests and filters out None values."""
+    """Builds request params for Oura Ring API requests and filters out None values."""
     return {k: v for k, v in params.items() if v is not None}
 
 async def make_oura_ring_request(url: str, params: dict[str, Any] | None = None) -> dict[str, Any] | None:
