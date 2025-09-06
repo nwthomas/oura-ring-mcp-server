@@ -68,6 +68,7 @@ deactivate
 ## Built With
 
 - [MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk)
+- [Pydantic](https://docs.pydantic.dev/latest/)
 - [uv](https://github.com/astral-sh/uv)
 
 ## Oura Ring API
