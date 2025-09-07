@@ -8,6 +8,7 @@ sync:
 	uv sync --reinstall
 
 test:
+	# NOTE: make venv, make sync, and source .venv/bin/activate must be run before this command
 	uv run pytest
 
 venv:

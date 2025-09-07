@@ -17,3 +17,8 @@ dependencies = [
 [project.urls]
 Repository = "https://github.com/nwthomas/oura-ring-mcp-server"
 Issues = "https://github.com/nwthomas/oura-ring-mcp-server/issues"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+]
