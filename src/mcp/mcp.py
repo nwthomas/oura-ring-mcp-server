@@ -8,7 +8,7 @@ from ..oura_ring.routes import (
     get_oura_ring_multiple_daily_resilience,
     get_oura_ring_multiple_daily_sleep,
     get_oura_ring_multiple_daily_spo2,
-    get_our_ring_multiple_daily_stress,
+    get_oura_ring_multiple_daily_stress,
     get_oura_ring_multiple_enhanced_tags,
     get_oura_ring_multiple_heart_rate,
     get_oura_ring_multiple_sleep_routes,
@@ -110,7 +110,7 @@ async def get_multiple_daily_stress(start_date: str, end_date: str) -> dict[str,
     Returns:
         The multiple daily stress values for each day in a given date range.
     """
-    return await get_our_ring_multiple_daily_stress(start_date, end_date)
+    return await get_oura_ring_multiple_daily_stress(start_date, end_date)
 
 @mcp.tool()
 async def get_multiple_daily_enhanced_tags(start_date: str, end_date: str) -> dict[str, Any]:
