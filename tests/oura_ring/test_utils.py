@@ -32,7 +32,7 @@ async def test_make_oura_ring_request_success(mocker: pytest_mock.MockerFixture)
     params = {"start_date": "2025-09-04", "end_date": "2025-09-04"}
     mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
     mock_response = mock_client.return_value.get.return_value
-    mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    mock_response.json = MagicMock(return_value={'data': [{'mocked_data': 'value'}]})
     mock_response.raise_for_status = MagicMock()  # Mock raise_for_status as a regular MagicMock
     client = mock_client.return_value
     try:
