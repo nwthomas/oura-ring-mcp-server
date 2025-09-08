@@ -223,5 +223,6 @@ async def get_workout(start_date: str, end_date: str, next_token: str | None = N
     return await get_oura_ring_multiple_workout(start_date, end_date, next_token)
 
 def start_server():
+    """Start the MCP server using the stdio transport."""
     print(f"Starting {SERVER_NAME}")
     mcp.run(transport='stdio')
