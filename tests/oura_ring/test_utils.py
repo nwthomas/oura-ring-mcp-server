@@ -26,9 +26,12 @@ async def test_make_oura_ring_request(mocker: pytest_mock.MockerFixture) -> None
     url = "https://api.ouraring.com/v2/usercollection/daily_activity"
     params = {"start_date": "2025-09-04", "end_date": "2025-09-04"}
     async with AsyncClient() as client:
-        response = await make_oura_ring_request(url, params)
-        assert response is not None
-        assert "data" in response
+        try:
+            response = await make_oura_ring_request(client, url, params)
+            assert response is not None
+            assert "data" in response
+        except Exception:
+            assert False
 
 @pytest.mark.asyncio
 async def test_make_oura_ring_request_error(mocker: pytest_mock.MockerFixture) -> None:
@@ -36,7 +39,7 @@ async def test_make_oura_ring_request_error(mocker: pytest_mock.MockerFixture) -
     params = {"start_date": "2025-09-05", "end_date": "2025-09-04"}
     async with AsyncClient() as client:
         try:
-            await make_oura_ring_request(url, params)
+            await make_oura_ring_request(client, url, params)
             assert False
         except Exception:
             assert True
