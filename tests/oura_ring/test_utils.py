@@ -2,7 +2,11 @@ import pytest
 import pytest_mock
 from httpx import AsyncClient
 from src.oura_ring.utils import build_oura_ring_request_headers, build_oura_ring_request_params, make_oura_ring_request
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, MagicMock
+
+@pytest.mark.asyncio
+async def raise_exception():
+    raise Exception("Mocked exception")
 
 def test_build_oura_ring_request_headers() -> None:
     headers = build_oura_ring_request_headers()
@@ -29,6 +33,7 @@ async def test_make_oura_ring_request_success(mocker: pytest_mock.MockerFixture)
     mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
     mock_response = mock_client.return_value.get.return_value
     mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    mock_response.raise_for_status = MagicMock()  # Mock raise_for_status as a regular MagicMock
     client = mock_client.return_value
     try:
         response = await make_oura_ring_request(client, url, params)
@@ -42,11 +47,7 @@ async def test_make_oura_ring_request_error(mocker: pytest_mock.MockerFixture) -
     url = "https://api.ouraring.com/v2/usercollection/daily_activity"
     params = {"start_date": "2025-09-05", "end_date": "2025-09-04"}
     mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
-    mock_response = mock_client.return_value.get.return_value
-    mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    mock_client.return_value.get.side_effect = raise_exception
     client = mock_client.return_value
-    try:
+    with pytest.raises(Exception):
         await make_oura_ring_request(client, url, params)
-        assert False
-    except Exception:
-        assert True
