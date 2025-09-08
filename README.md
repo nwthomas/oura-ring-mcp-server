@@ -147,5 +147,5 @@ The current Oura API (V2) is the only available integration point. The previous 
 ## Resources
 
 - [Model Context Protocol overview](https://modelcontextprotocol.io/docs/getting-started/intro), [architecture concepts](https://modelcontextprotocol.io/docs/learn/architecture), and [MCP server concepts](https://modelcontextprotocol.io/docs/learn/server-concepts)
-- [Model Context Protocol Github repository](https://github.com/modelcontextprotocol)
+- [Model Context Protocol Github repository](https://github.com/modelcontextprotocol) and [Python SDK](https://github.com/modelcontextprotocol/python-sdk/tree/main)
 - [Oura Ring API Documentation](https://cloud.ouraring.com/v2/docs)

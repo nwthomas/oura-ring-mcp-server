@@ -2,6 +2,7 @@ import pytest
 import pytest_mock
 from httpx import AsyncClient
 from src.oura_ring.utils import build_oura_ring_request_headers, build_oura_ring_request_params, make_oura_ring_request
+from unittest.mock import AsyncMock
 
 def test_build_oura_ring_request_headers() -> None:
     headers = build_oura_ring_request_headers()
@@ -22,24 +23,30 @@ def test_build_oura_ring_request_params_filter_none_values() -> None:
     assert "end_date" not in filtered_params
 
 @pytest.mark.asyncio
-async def test_make_oura_ring_request(mocker: pytest_mock.MockerFixture) -> None:
+async def test_make_oura_ring_request_success(mocker: pytest_mock.MockerFixture) -> None:
     url = "https://api.ouraring.com/v2/usercollection/daily_activity"
     params = {"start_date": "2025-09-04", "end_date": "2025-09-04"}
-    async with AsyncClient() as client:
-        try:
-            response = await make_oura_ring_request(client, url, params)
-            assert response is not None
-            assert "data" in response
-        except Exception:
-            assert False
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_response = mock_client.return_value.get.return_value
+    mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    client = mock_client.return_value
+    try:
+        response = await make_oura_ring_request(client, url, params)
+        assert response is not None
+        assert "data" in response
+    except Exception:
+        assert False
 
 @pytest.mark.asyncio
 async def test_make_oura_ring_request_error(mocker: pytest_mock.MockerFixture) -> None:
     url = "https://api.ouraring.com/v2/usercollection/daily_activity"
     params = {"start_date": "2025-09-05", "end_date": "2025-09-04"}
-    async with AsyncClient() as client:
-        try:
-            await make_oura_ring_request(client, url, params)
-            assert False
-        except Exception:
-            assert True
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_response = mock_client.return_value.get.return_value
+    mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    client = mock_client.return_value
+    try:
+        await make_oura_ring_request(client, url, params)
+        assert False
+    except Exception:
+        assert True

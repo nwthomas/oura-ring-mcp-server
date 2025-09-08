@@ -17,105 +17,173 @@ from src.oura_ring.routes import (
     get_oura_ring_multiple_workout,
     get_oura_ring_personal_information,
 )
+from unittest.mock import AsyncMock
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_daily_activity_success():
-    response = await get_oura_ring_multiple_daily_activity(start_date="2025-01-01", end_date="2025-01-01")
+async def raise_exception():
+    raise Exception("Mocked exception")
+
+@pytest.mark.asyncio
+async def test_get_oura_ring_multiple_daily_activity_success(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_response = mock_client.return_value.get.return_value
+    mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    client = mock_client.return_value
+    response = await get_oura_ring_multiple_daily_activity(client=client, start_date="2025-01-01", end_date="2025-01-01")
     assert response is not None
     assert "data" in response
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_daily_activity_error():
+async def test_get_oura_ring_multiple_daily_activity_error(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_client.return_value.get.side_effect = raise_exception
+    client = mock_client.return_value
     with pytest.raises(Exception):
-        await get_oura_ring_multiple_daily_activity(start_date="test-error-start", end_date="test-error-end")
+        await get_oura_ring_multiple_daily_activity(client=client, start_date="test-error-start", end_date="test-error-end")
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_daily_cardiovascular_age_success():
-    response = await get_oura_ring_daily_cardiovascular_age(start_date="2025-01-01", end_date="2025-01-01")
+async def test_get_oura_ring_daily_cardiovascular_age_success(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_response = mock_client.return_value.get.return_value
+    mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    client = mock_client.return_value
+    response = await get_oura_ring_daily_cardiovascular_age(client=client, start_date="2025-01-01", end_date="2025-01-01")
     assert response is not None
     assert "data" in response
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_daily_cardiovascular_age_error():
+async def test_get_oura_ring_daily_cardiovascular_age_error(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_client.return_value.get.side_effect = raise_exception
+    client = mock_client.return_value
     with pytest.raises(Exception):
-        await get_oura_ring_daily_cardiovascular_age(start_date="test-error-start", end_date="test-error-end")
+        await get_oura_ring_daily_cardiovascular_age(client=client, start_date="test-error-start", end_date="test-error-end")
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_daily_readiness_success():
-    response = await get_oura_ring_multiple_daily_readiness(start_date="2025-01-01", end_date="2025-01-01")
+async def test_get_oura_ring_multiple_daily_readiness_success(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_response = mock_client.return_value.get.return_value
+    mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    client = mock_client.return_value
+    response = await get_oura_ring_multiple_daily_readiness(client=client, start_date="2025-01-01", end_date="2025-01-01")
     assert response is not None
     assert "data" in response
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_daily_readiness_error():
+async def test_get_oura_ring_multiple_daily_readiness_error(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_client.return_value.get.side_effect = raise_exception
+    client = mock_client.return_value
     with pytest.raises(Exception):
-        await get_oura_ring_multiple_daily_readiness(start_date="test-error-start", end_date="test-error-end")
+        await get_oura_ring_multiple_daily_readiness(client=client, start_date="test-error-start", end_date="test-error-end")
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_daily_resilience_success():
-    response = await get_oura_ring_multiple_daily_resilience(start_date="2025-01-01", end_date="2025-01-01")
+async def test_get_oura_ring_multiple_daily_resilience_success(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_response = mock_client.return_value.get.return_value
+    mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    client = mock_client.return_value
+    response = await get_oura_ring_multiple_daily_resilience(client=client, start_date="2025-01-01", end_date="2025-01-01")
     assert response is not None
     assert "data" in response
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_daily_resilience_error():
+async def test_get_oura_ring_multiple_daily_resilience_error(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_client.return_value.get.side_effect = raise_exception
+    client = mock_client.return_value
     with pytest.raises(Exception):
-        await get_oura_ring_multiple_daily_resilience(start_date="test-error-start", end_date="test-error-end")
+        await get_oura_ring_multiple_daily_resilience(client=client, start_date="test-error-start", end_date="test-error-end")
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_daily_sleep_success():
-    response = await get_oura_ring_multiple_daily_sleep(start_date="2025-01-01", end_date="2025-01-01")
+async def test_get_oura_ring_multiple_daily_sleep_success(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_response = mock_client.return_value.get.return_value
+    mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    client = mock_client.return_value
+    response = await get_oura_ring_multiple_daily_sleep(client=client, start_date="2025-01-01", end_date="2025-01-01")
     assert response is not None
     assert "data" in response
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_daily_sleep_error():
+async def test_get_oura_ring_multiple_daily_sleep_error(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_client.return_value.get.side_effect = raise_exception
+    client = mock_client.return_value
     with pytest.raises(Exception):
-        await get_oura_ring_multiple_daily_sleep(start_date="test-error-start", end_date="test-error-end")
+        await get_oura_ring_multiple_daily_sleep(client=client, start_date="test-error-start", end_date="test-error-end")
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_daily_spo2_success():
-    response = await get_oura_ring_multiple_daily_spo2(start_date="2025-01-01", end_date="2025-01-01")
+async def test_get_oura_ring_multiple_daily_spo2_success(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_response = mock_client.return_value.get.return_value
+    mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    client = mock_client.return_value
+    response = await get_oura_ring_multiple_daily_spo2(client=client, start_date="2025-01-01", end_date="2025-01-01")
     assert response is not None
     assert "data" in response
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_daily_spo2_error():
+async def test_get_oura_ring_multiple_daily_spo2_error(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_client.return_value.get.side_effect = raise_exception
+    client = mock_client.return_value
     with pytest.raises(Exception):
-        await get_oura_ring_multiple_daily_spo2(start_date="test-error-start", end_date="test-error-end")
+        await get_oura_ring_multiple_daily_spo2(client=client, start_date="test-error-start", end_date="test-error-end")
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_daily_stress_success():
-    response = await get_oura_ring_multiple_daily_stress(start_date="2025-01-01", end_date="2025-01-01")
+async def test_get_oura_ring_multiple_daily_stress_success(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_response = mock_client.return_value.get.return_value
+    mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    client = mock_client.return_value
+    response = await get_oura_ring_multiple_daily_stress(client=client, start_date="2025-01-01", end_date="2025-01-01")
     assert response is not None
     assert "data" in response
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_daily_stress_error():
+async def test_get_oura_ring_multiple_daily_stress_error(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_client.return_value.get.side_effect = raise_exception
+    client = mock_client.return_value
     with pytest.raises(Exception):
-        await get_oura_ring_multiple_daily_stress(start_date="test-error-start", end_date="test-error-end")
+        await get_oura_ring_multiple_daily_stress(client=client, start_date="test-error-start", end_date="test-error-end")
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_enhanced_tags_success():
-    response = await get_oura_ring_multiple_enhanced_tags(start_date="2025-01-01", end_date="2025-01-01")
+async def test_get_oura_ring_multiple_enhanced_tags_success(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_response = mock_client.return_value.get.return_value
+    mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    client = mock_client.return_value
+    response = await get_oura_ring_multiple_enhanced_tags(client=client, start_date="2025-01-01", end_date="2025-01-01")
     assert response is not None
     assert "data" in response
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_enhanced_tags_error():
+async def test_get_oura_ring_multiple_enhanced_tags_error(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_client.return_value.get.side_effect = raise_exception
+    client = mock_client.return_value
     with pytest.raises(Exception):
-        await get_oura_ring_multiple_enhanced_tags(start_date="test-error-start", end_date="test-error-end")
+        await get_oura_ring_multiple_enhanced_tags(client=client, start_date="test-error-start", end_date="test-error-end")
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_heart_rate_success():
-    response = await get_oura_ring_multiple_heart_rate(start_date="2025-01-01", end_date="2025-01-01")
+async def test_get_oura_ring_multiple_heart_rate_success(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_response = mock_client.return_value.get.return_value
+    mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    client = mock_client.return_value
+    response = await get_oura_ring_multiple_heart_rate(client=client, start_date="2025-01-01", end_date="2025-01-01")
     assert response is not None
     assert "data" in response
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_heart_rate_error():
+async def test_get_oura_ring_multiple_heart_rate_error(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_client.return_value.get.side_effect = raise_exception
+    client = mock_client.return_value
     with pytest.raises(Exception):
-        await get_oura_ring_multiple_heart_rate(start_date="test-error-start", end_date="test-error-end")
+        await get_oura_ring_multiple_heart_rate(client=client, start_date="test-error-start", end_date="test-error-end")
 
 # @pytest.mark.asyncio
 # async def test_get_oura_ring_personal_information_success():
@@ -129,56 +197,91 @@ async def test_get_oura_ring_multiple_heart_rate_error():
 #         await get_oura_ring_personal_information(client=AsyncClient(base_url="test-error-url"))
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_session_routes_success():
-    response = await get_oura_ring_multiple_session_routes(start_date="2025-01-01", end_date="2025-01-01")
+async def test_get_oura_ring_multiple_session_routes_success(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_response = mock_client.return_value.get.return_value
+    mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    client = mock_client.return_value
+    response = await get_oura_ring_multiple_session_routes(client=client, start_date="2025-01-01", end_date="2025-01-01")
     assert response is not None
     assert "data" in response
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_session_routes_error():
+async def test_get_oura_ring_multiple_session_routes_error(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_client.return_value.get.side_effect = raise_exception
+    client = mock_client.return_value
     with pytest.raises(Exception):
-        await get_oura_ring_multiple_session_routes(start_date="test-error-start", end_date="test-error-end")
+        await get_oura_ring_multiple_session_routes(client=client, start_date="test-error-start", end_date="test-error-end")
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_sleep_routes_success():
-    response = await get_oura_ring_multiple_sleep_routes(start_date="2025-01-01", end_date="2025-01-01")
+async def test_get_oura_ring_multiple_sleep_routes_success(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_response = mock_client.return_value.get.return_value
+    mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    client = mock_client.return_value
+    response = await get_oura_ring_multiple_sleep_routes(client=client, start_date="2025-01-01", end_date="2025-01-01")
     assert response is not None
     assert "data" in response
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_sleep_routes_error():
+async def test_get_oura_ring_multiple_sleep_routes_error(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_client.return_value.get.side_effect = raise_exception
+    client = mock_client.return_value
     with pytest.raises(Exception):
-        await get_oura_ring_multiple_sleep_routes(start_date="test-error-start", end_date="test-error-end")
+        await get_oura_ring_multiple_sleep_routes(client=client, start_date="test-error-start", end_date="test-error-end")
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_sleep_time_success():
-    response = await get_oura_ring_multiple_sleep_time(start_date="2025-01-01", end_date="2025-01-01")
+async def test_get_oura_ring_multiple_sleep_time_success(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_response = mock_client.return_value.get.return_value
+    mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    client = mock_client.return_value
+    response = await get_oura_ring_multiple_sleep_time(client=client, start_date="2025-01-01", end_date="2025-01-01")
     assert response is not None
     assert "data" in response
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_sleep_time_error():
+async def test_get_oura_ring_multiple_sleep_time_error(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_client.return_value.get.side_effect = raise_exception
+    client = mock_client.return_value
     with pytest.raises(Exception):
-        await get_oura_ring_multiple_sleep_time(start_date="test-error-start", end_date="test-error-end")
+        await get_oura_ring_multiple_sleep_time(client=client, start_date="test-error-start", end_date="test-error-end")
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_vo2_max_success():
-    response = await get_oura_ring_multiple_vo2_max(start_date="2025-01-01", end_date="2025-01-01")
+async def test_get_oura_ring_multiple_vo2_max_success(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_response = mock_client.return_value.get.return_value
+    mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    client = mock_client.return_value
+    response = await get_oura_ring_multiple_vo2_max(client=client, start_date="2025-01-01", end_date="2025-01-01")
     assert response is not None
     assert "data" in response
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_vo2_max_error():
+async def test_get_oura_ring_multiple_vo2_max_error(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_client.return_value.get.side_effect = raise_exception
+    client = mock_client.return_value
     with pytest.raises(Exception):
-        await get_oura_ring_multiple_vo2_max(start_date="test-error-start", end_date="test-error-end")
+        await get_oura_ring_multiple_vo2_max(client=client, start_date="test-error-start", end_date="test-error-end")
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_workout_success():
-    response = await get_oura_ring_multiple_workout(start_date="2025-01-01", end_date="2025-01-01")
+async def test_get_oura_ring_multiple_workout_success(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_response = mock_client.return_value.get.return_value
+    mock_response.json = AsyncMock(return_value={'data': [{'mocked_data': 'value'}]})
+    client = mock_client.return_value
+    response = await get_oura_ring_multiple_workout(client=client, start_date="2025-01-01", end_date="2025-01-01")
     assert response is not None
     assert "data" in response
 
 @pytest.mark.asyncio
-async def test_get_oura_ring_multiple_workout_error():
+async def test_get_oura_ring_multiple_workout_error(mocker):
+    mock_client = mocker.patch('httpx.AsyncClient', new_callable=AsyncMock)
+    mock_client.return_value.get.side_effect = raise_exception
+    client = mock_client.return_value
     with pytest.raises(Exception):
-        await get_oura_ring_multiple_workout(start_date="test-error-start", end_date="test-error-end")
+        await get_oura_ring_multiple_workout(client=client, start_date="test-error-start", end_date="test-error-end")

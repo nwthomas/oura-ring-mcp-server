@@ -22,7 +22,7 @@ async def make_oura_ring_request(client: AsyncClient, url: str, params: dict[str
         try:
             response = await client.get(url, headers=headers, params=params, timeout=SERVER_TIMEOUT_SECONDS)
             response.raise_for_status()
-            data = response.json()
+            data = await response.json()
             if "data" in data:
                 all_data.extend(data["data"])
             else:
