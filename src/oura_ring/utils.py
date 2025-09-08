@@ -14,12 +14,24 @@ def build_oura_ring_request_params(params: dict[str, Any]) -> dict[str, Any]:
     """Builds request params for Oura Ring API requests and filters out None values."""
     return {k: v for k, v in params.items() if v is not None}
 
-async def make_oura_ring_request(client: AsyncClient, url: str, params: dict[str, Any] | None = None) -> dict[str, Any] | None:
-    """Make a request to the Oura Ring API with proper error handling."""
+async def make_oura_ring_request(client: AsyncClient, url: str, params: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+    """Make a request to the Oura Ring API and iteratively fetch results using next_token."""
     headers = build_oura_ring_request_headers()
-    try:
-        response = await client.get(url, headers=headers, params=params, timeout=SERVER_TIMEOUT_SECONDS)
-        response.raise_for_status()
-        return response.json()
-    except Exception as error:
-        return error
+    all_data = []
+    while True:
+        try:
+            response = await client.get(url, headers=headers, params=params, timeout=SERVER_TIMEOUT_SECONDS)
+            response.raise_for_status()
+            data = response.json()
+            if "data" in data:
+                all_data.extend(data["data"])
+            else:
+                raise Exception("No data found in response")
+            next_token = data.get('next_token')
+            if not next_token:
+                break
+            params = params or {}
+            params['next_token'] = next_token
+        except Exception as error:
+            raise error
+    return {"data": all_data}
