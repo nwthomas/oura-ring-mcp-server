@@ -1,10 +1,6 @@
 from httpx import AsyncClient
 from typing import Any
 from .constants import OURA_RING_PERSONAL_ACCESS_TOKEN, SERVER_USER_AGENT, SERVER_TIMEOUT_SECONDS
-import inspect
-
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)
 
 def build_oura_ring_request_headers() -> dict[str, str]:
     """Builds request headers for Oura Ring API requests."""
