@@ -55,7 +55,7 @@ Finally, you can run the project with the following command:
 make run
 ```
 
-However, this MCP server will likely be accessed locally. I will eventually wire up a Docker build process, but you can follow the [Anthropic local MCP server](https://modelcontextprotocol.io/quickstart/user) setup options until then to run it locally. It will integrate with any LLM that has MCP client wrappers setup.
+However, this MCP server will likely be accessed locally. I will eventually wire up a Docker build process, but you can follow the [Anthropic local MCP server](https://modelcontextprotocol.io/docs/develop/connect-local-servers) setup options until then to run it locally. It will integrate with any LLM that has MCP client wrappers setup.
 
 If you want to exit the virtual environment, just run:
 
