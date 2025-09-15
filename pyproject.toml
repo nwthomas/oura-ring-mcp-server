@@ -9,7 +9,7 @@ keywords = ["git", "mcp", "llm", "automation", "oura", "ring"]
 license = { text = "MIT" }
 dependencies = [
     "httpx==0.28.1",
-    "mcp[cli]==1.13.1",
+    "mcp[cli]==1.14.0",
     "pydantic==2.11.7",
     "anyio==4.10.0",
     "pytest-asyncio==1.1.0",
