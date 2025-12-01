@@ -34,9 +34,9 @@ eval "$(pyenv virtualenv-init -)"
 source ~/.zshrc
 source ~/.bashrc
 
-# Install Python 3.12.4 in Pyenv and set it as global
-pyenv install 3.12.14
-pyenv global 3.12.14
+# Install Python 3.14.0 in Pyenv and set it as global
+pyenv install 3.14.0
+pyenv global 3.14.0
 
 # Finally, verify via these commands
 python --version
@@ -83,6 +83,7 @@ This MCP server will work with other agents, but you will need to figure out the
 ## Oura Ring API Overview
 
 Different data has different sync policies for different types of data they collect:
+
 - Sleep data only syncs when users open the app
 - Daily activity and stress sync in the background without using the app
 
