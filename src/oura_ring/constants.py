@@ -1,4 +1,3 @@
-# NOTE: All current API documentation for Oura Ring is using the v2 version of their API
 import os
 from dotenv import load_dotenv
 
@@ -11,6 +10,12 @@ SERVER_TIMEOUT_SECONDS = 5.0
 # Oura Ring constants and secrets
 OURA_RING_API_BASE = "https://api.ouraring.com"
 
-# NOTE: Oura Ring says the Personal Access Tokens (PATs) are only valid until the end of 2025. See:
-# https://cloud.ouraring.com/v2/docs#section/Deprecation-Warning-Personal-Access-Tokens
-OURA_RING_PERSONAL_ACCESS_TOKEN = os.getenv("OURA_RING_PERSONAL_ACCESS_TOKEN")
+# !IMPORTANT: Follow the directions in the README.md file to get this token process setup
+OURA_RING_USER_CODE = os.getenv("OURA_RING_USER_CODE", "")
+OURA_RING_CLIENT_ID = os.getenv("OURA_RING_CLIENT_ID", "")
+OURA_RING_CLIENT_SECRET = os.getenv("OURA_RING_CLIENT_SECRET", "")
+
+# For storing tokens locally against future MCP server runs
+OURA_RING_TOKEN_FILE_NAME = "tokens.json"
+OURA_RING_ACCESS_TOKEN_NAME = "access_token"
+OURA_RING_REFRESH_TOKEN_NAME = "refresh_token"

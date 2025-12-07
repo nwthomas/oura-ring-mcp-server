@@ -218,3 +218,4 @@ __marimo__/
 
 # Miscellaneous
 .DS_Store
+tokens.json

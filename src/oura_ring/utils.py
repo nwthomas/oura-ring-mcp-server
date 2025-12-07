@@ -5,6 +5,79 @@ from .constants import (
     SERVER_USER_AGENT,
     SERVER_TIMEOUT_SECONDS,
 )
+import json
+from src.oura_ring.constants import (
+    OURA_RING_API_BASE,
+    OURA_RING_TOKEN_FILE_NAME,
+    OURA_RING_ACCESS_TOKEN_NAME,
+    OURA_RING_REFRESH_TOKEN_NAME,
+)
+import requests
+
+# Cached in-memory tokens during current server runtime
+TOKENS = {}
+
+
+async def load_or_fetch_tokens():
+    """Load tokens from file"""
+    global TOKENS
+
+    try:
+        with open(OURA_RING_TOKEN_FILE_NAME, "r") as f:
+            TOKENS = json.load(f)
+        if get_access_token() is None or get_refresh_token() is None:
+            await fetch_tokens()
+    except FileNotFoundError:
+        TOKENS = {}
+
+
+def save_tokens():
+    """Save tokens to file"""
+    global TOKENS
+
+    with open(OURA_RING_TOKEN_FILE_NAME, "w") as f:
+        json.dump(TOKENS, f)
+
+
+def set_tokens(access_token: str, refresh_token: str):
+    """Set tokens in memory and file"""
+    global TOKENS
+
+    TOKENS[OURA_RING_ACCESS_TOKEN_NAME] = access_token
+    TOKENS[OURA_RING_REFRESH_TOKEN_NAME] = refresh_token
+    save_tokens()
+
+
+def get_access_token() -> str | None:
+    """Return current access token"""
+    global TOKENS
+
+    return TOKENS.get(OURA_RING_ACCESS_TOKEN_NAME)
+
+
+def get_refresh_token():
+    """Return current refresh token"""
+    global TOKENS
+
+    return TOKENS.get(OURA_RING_REFRESH_TOKEN_NAME)
+
+
+async def fetch_tokens():
+    """Ensure TOKENS exist; if not, fetch using the user token."""
+    response = requests.post(
+        f"{OURA_RING_API_BASE}/oauth/token",
+        data={
+            "grant_type": "authorization_code",
+            "code": "<USER_TOKEN_OR_CODE>",
+            "client_id": "<CLIENT_ID>",
+            "client_secret": "<CLIENT_SECRET>",
+            "redirect_uri": "http://localhost:8000/webhook_handler",
+        },
+    )
+    data = response.json()
+    TOKENS[OURA_RING_ACCESS_TOKEN_NAME] = data[OURA_RING_ACCESS_TOKEN_NAME]
+    TOKENS[OURA_RING_REFRESH_TOKEN_NAME] = data[OURA_RING_REFRESH_TOKEN_NAME]
+    save_tokens()
 
 
 def build_oura_ring_request_headers() -> dict[str, str]:
