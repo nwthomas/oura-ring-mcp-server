@@ -10,6 +10,7 @@ SERVER_TIMEOUT_SECONDS = 5.0
 
 # Oura Ring constants and secrets
 OURA_RING_API_BASE = "https://api.ouraring.com"
+
 # NOTE: Oura Ring says the Personal Access Tokens (PATs) are only valid until the end of 2025. See:
 # https://cloud.ouraring.com/v2/docs#section/Deprecation-Warning-Personal-Access-Tokens
-OURA_RING_PERSONAL_ACCESS_TOKEN=os.getenv("OURA_RING_PERSONAL_ACCESS_TOKEN")
+OURA_RING_PERSONAL_ACCESS_TOKEN = os.getenv("OURA_RING_PERSONAL_ACCESS_TOKEN")

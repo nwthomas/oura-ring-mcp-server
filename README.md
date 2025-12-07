@@ -1,3 +1,5 @@
+> NOTE: This project has been updated to use OAuth2 ahead of Oura Ring's deprecation of Personal Access Tokens (PATs). This means your MCP will work into 2026 (and beyond) after following the setup steps.
+
 # Oura Ring MCP Server
 
 This repository contains a Model Context Protocol (MCP) implementation wrapping calls to the Oura Ring API. It can be used by any LLM that implements the MCP client protocol in order to interface with it. It's currently setup to run locally.
@@ -5,11 +7,24 @@ This repository contains a Model Context Protocol (MCP) implementation wrapping 
 ## Table of Contents
 
 1. [Setup](#setup)
+   a. [Oura Ring Application Setup](#oura-ring-application-setup)
+   b. [Server Setup](#server-setup)
+   c. [Claude Desktop Setup](#claude-desktop-setup)
 2. [Oura Ring API Overview](#oura-ring-api-overview)
 3. [Built With](#built-with)
 4. [Resources](#resources)
 
 ## Setup
+
+#### Oura Ring Application Setup
+
+You'll have to jump through a few hooks initially to authorize this server as an "app" with Oura Ring as well as to have access to your account, but it should be smooth sailing after initial setup.
+
+This server doesn't have a front-end by design (as your AI model - using something like Claude Desktop - will be the puppeteer after setup), so a few of the initial steps that would normally be a flow in a web/mobile app will be manual.
+
+First,
+
+#### Server Setup
 
 First, you'll need to ensure that you have `uv` and the right Python versions.
 
@@ -55,6 +70,8 @@ Finally, you can run the project with the following command:
 ```sh
 make run
 ```
+
+#### Claude Desktop Setup
 
 This MCP server is currently setup to be run/accessed by a model locally (on your local computer with something like [Claude Desktop](https://claude.com/download)). I will eventually wire up a Docker build process, but you can follow the [Anthropic local MCP server](https://modelcontextprotocol.io/docs/develop/connect-local-servers) setup options until then to run it locally. It will integrate with any LLM that has MCP client wrappers setup.
 
