@@ -1,7 +1,9 @@
 from httpx import AsyncClient
 from typing import Any
 from .constants import (
-    OURA_RING_PERSONAL_ACCESS_TOKEN,
+    OURA_RING_USER_CODE,
+    OURA_RING_CLIENT_ID,
+    OURA_RING_CLIENT_SECRET,
     SERVER_USER_AGENT,
     SERVER_TIMEOUT_SECONDS,
 )
@@ -25,10 +27,15 @@ async def load_or_fetch_tokens():
     try:
         with open(OURA_RING_TOKEN_FILE_NAME, "r") as f:
             TOKENS = json.load(f)
-        if get_access_token() is None or get_refresh_token() is None:
-            await fetch_tokens()
+    # This will happen under normal circumstances, so just set the empty variable and continue.
     except FileNotFoundError:
         TOKENS = {}
+
+    try:
+        if get_access_token() is None or get_refresh_token() is None:
+            await fetch_tokens()
+    except Exception as e:
+        raise e
 
 
 def save_tokens():
@@ -63,15 +70,15 @@ def get_refresh_token():
 
 
 async def fetch_tokens():
-    """Ensure TOKENS exist; if not, fetch using the user token."""
+    """Fetch tokens from Oura Ring API"""
     response = requests.post(
         f"{OURA_RING_API_BASE}/oauth/token",
         data={
             "grant_type": "authorization_code",
-            "code": "<USER_TOKEN_OR_CODE>",
-            "client_id": "<CLIENT_ID>",
-            "client_secret": "<CLIENT_SECRET>",
-            "redirect_uri": "http://localhost:8000/webhook_handler",
+            "code": OURA_RING_USER_CODE,
+            "client_id": OURA_RING_CLIENT_ID,
+            "client_secret": OURA_RING_CLIENT_SECRET,
+            "redirect_uri": "https://webhook.site/ed587e4f-3b4e-4abd-b688-b5414f9ccaf7",
         },
     )
     data = response.json()
@@ -84,7 +91,7 @@ def build_oura_ring_request_headers() -> dict[str, str]:
     """Builds request headers for Oura Ring API requests."""
     return {
         "Accept": "application/json",
-        "Authorization": f"Bearer {OURA_RING_PERSONAL_ACCESS_TOKEN}",
+        "Authorization": f"Bearer {get_access_token()}",
         "User-Agent": SERVER_USER_AGENT,
     }
 
@@ -98,6 +105,9 @@ async def make_oura_ring_request(
     client: AsyncClient, url: str, params: dict[str, Any] | None = None
 ) -> dict[str, list[dict[str, Any]]]:
     """Make a request to the Oura Ring API and iteratively fetch results using next_token."""
+    if get_access_token() is None or get_refresh_token() is None:
+        await load_or_fetch_tokens()
+
     headers = build_oura_ring_request_headers()
     all_data = []
     while True:

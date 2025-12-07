@@ -6,13 +6,15 @@ This repository contains a Model Context Protocol (MCP) implementation wrapping 
 
 ## Table of Contents
 
-1. [Setup](#setup)
-   a. [Oura Ring Application Setup](#oura-ring-application-setup)
-   b. [Server Setup](#server-setup)
-   c. [Claude Desktop Setup](#claude-desktop-setup)
-2. [Oura Ring API Overview](#oura-ring-api-overview)
-3. [Built With](#built-with)
-4. [Resources](#resources)
+- [Setup](#setup)
+
+  - [Oura Ring Application Setup](#oura-ring-application-setup)
+  - [Server Setup](#server-setup)
+  - [Claude Desktop Setup](#claude-desktop-setup)
+
+- [Oura Ring API Overview](#oura-ring-api-overview)
+- [Built With](#built-with)
+- [Resources](#resources)
 
 ## Setup
 

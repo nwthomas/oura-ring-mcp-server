@@ -1,3 +1,3 @@
-from src.mcp.mcp import run_server
+from src.mcp.mcp import start_server
 
-__all__ = ["run_server"]
+__all__ = ["start_server"]

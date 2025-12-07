@@ -18,12 +18,9 @@ from src.oura_ring.routes import (
     get_oura_ring_multiple_vo2_max,
     get_oura_ring_multiple_workout,
 )
-from src.oura_ring.utils import (
-    load_or_fetch_tokens,
-)
 
 # Main MCP server which will run on stdio transport
-mcp = FastMCP(name=SERVER_NAME, port=SERVER_PORT, onstartup=load_or_fetch_tokens)
+mcp = FastMCP(name=SERVER_NAME, port=SERVER_PORT)
 
 
 @mcp.tool()
