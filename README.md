@@ -24,7 +24,27 @@ You'll have to jump through a few hooks initially to authorize this server as an
 
 This server doesn't have a front-end by design (as your AI model - using something like Claude Desktop - will be the puppeteer after setup), so a few of the initial steps that would normally be a flow in a web/mobile app will be manual.
 
-First,
+First, go to the [Oura Ring Developer Applications Dashboard](https://developer.ouraring.com/applications) and sign up your new MCP server application. You should "Add New" and fill it out like this:
+
+![Oura Ring Developer Dashboard new application](./assets/oura-ring-new-application.png)
+
+For the above picture, there's a field for "Redirect URIs" which is a webhook callback URL. Unless you run a webhook service of your own, you can use [Webhook.site](https://webhook.site) for a quick test link. Copy the "Your unique URL" from the below screenshot into the "Redirect URIs" in the above screenshot on the Oura Ring new application dashboard:
+
+![Webhook.site callback url dashboard](./assets/webhook-site-example.png)
+
+Don't close the `webhook.site` url tab down yet.
+
+Next, click "Create Application" for the Oura Ring new application flow. You'll then see the dashboard list your `Client id` and `Client secret`. Copy those into your local `.env` (using the `.env.example` file I included in this repository) for the `OURA_RING_CLIENT_ID` and `OURA_RING_CLIENT_SECRET` values.
+
+Then, copy the `Example Authorization Url` from the Oura Ring Application Dashboard and open it in a tab in your browser. You'll be doing the OAuth2 flow manually to get your token. Approve all permissions with the "Submit Consent" button:
+
+![Oura Ring Connect with Oura](./assets/oura-ring-submit-consent.pn.png)
+
+After you do that, the `webhook.site` dashboard will update with a callback that just got made to their service. Grab the `code` from that (below is a non-functional example token) and set it as the `OURA_RING_USER_CODE` value:
+
+![webhook.site callback code example](./assets/webhook-site-callback-code.pn.png)
+
+Congratulations, you now have all the secrets setup you need locally to proceed with using the MCP server. The actual access/refresh token fetch is automatic when you're using the MCP server. However, if anything is broken with the token process, you can retry fetching your user code token (which we just did above) and set the updated version in your `.env` again.
 
 #### Server Setup
 
