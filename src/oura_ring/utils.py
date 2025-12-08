@@ -15,6 +15,7 @@ from src.oura_ring.constants import (
     OURA_RING_REFRESH_TOKEN_NAME,
 )
 import requests
+import os
 
 # Cached in-memory tokens during current server runtime
 TOKENS = {}
@@ -31,11 +32,26 @@ async def load_or_fetch_tokens():
     except FileNotFoundError:
         TOKENS = {}
 
-    try:
-        if get_access_token() is None or get_refresh_token() is None:
+    print(f"Tokens loaded from file: {TOKENS}")
+    # This process either fetches the tokens (realistically, the first time this server is run
+    # with a full .env filled out), refreshes the access token, or raises an error. In the error
+    # case, the user should get a new user code token from Oura Ring using their OAuth2 flow and
+    # and delete the tokens.json file.
+    if get_access_token() is None or get_refresh_token() is None:
+        try:
             await fetch_tokens()
-    except Exception as e:
-        raise e
+        except Exception as e:
+            print(e)
+            raise e
+    elif get_refresh_token() is not None:
+        await refresh_access_token()
+    else:
+        # If this case is hit, something has gone wrong with the token process and the user should
+        # get and save a new user code token from Oura Ring using their OAuth2 flow.
+        delete_tokens()
+        raise Exception(
+            "No tokens available, please re-run the OAuth2 flow to get a new user code token"
+        )
 
 
 def save_tokens():
@@ -46,13 +62,21 @@ def save_tokens():
         json.dump(TOKENS, f)
 
 
+def delete_tokens():
+    """Delete tokens.json file"""
+    global TOKENS
+
+    TOKENS = {}
+
+    os.remove(OURA_RING_TOKEN_FILE_NAME)
+
+
 def set_tokens(access_token: str, refresh_token: str):
     """Set tokens in memory and file"""
     global TOKENS
 
     TOKENS[OURA_RING_ACCESS_TOKEN_NAME] = access_token
     TOKENS[OURA_RING_REFRESH_TOKEN_NAME] = refresh_token
-    save_tokens()
 
 
 def get_access_token() -> str | None:
@@ -78,7 +102,29 @@ async def fetch_tokens():
             "code": OURA_RING_USER_CODE,
             "client_id": OURA_RING_CLIENT_ID,
             "client_secret": OURA_RING_CLIENT_SECRET,
-            "redirect_uri": "https://webhook.site/ed587e4f-3b4e-4abd-b688-b5414f9ccaf7",
+        },
+    )
+    data = response.json()
+
+    if (
+        OURA_RING_ACCESS_TOKEN_NAME not in data
+        or OURA_RING_REFRESH_TOKEN_NAME not in data
+    ):
+        raise Exception("No tokens found in response")
+
+    set_tokens(data[OURA_RING_ACCESS_TOKEN_NAME], data[OURA_RING_REFRESH_TOKEN_NAME])
+    save_tokens()
+
+
+async def refresh_access_token():
+    """Refresh the access token"""
+    response = requests.post(
+        f"{OURA_RING_API_BASE}/oauth/token",
+        data={
+            "grant_type": "refresh_token",
+            "refresh_token": get_refresh_token(),
+            "client_id": OURA_RING_CLIENT_ID,
+            "client_secret": OURA_RING_CLIENT_SECRET,
         },
     )
     data = response.json()
@@ -105,27 +151,33 @@ async def make_oura_ring_request(
     client: AsyncClient, url: str, params: dict[str, Any] | None = None
 ) -> dict[str, list[dict[str, Any]]]:
     """Make a request to the Oura Ring API and iteratively fetch results using next_token."""
-    if get_access_token() is None or get_refresh_token() is None:
-        await load_or_fetch_tokens()
-
-    headers = build_oura_ring_request_headers()
     all_data = []
+
     while True:
         try:
+            if get_access_token() is None or get_refresh_token() is None:
+                await load_or_fetch_tokens()
+
+            headers = build_oura_ring_request_headers()
+
             response = await client.get(
                 url, headers=headers, params=params, timeout=SERVER_TIMEOUT_SECONDS
             )
             response.raise_for_status()
-            data = response.json()  # Directly use response.json() without await
+            data = response.json()
+
             if "data" in data:
                 all_data.extend(data["data"])
             else:
                 raise Exception("No data found in response")
+
             next_token = data.get("next_token")
             if not next_token:
                 break
+
             params = params or {}
             params["next_token"] = next_token
         except Exception as error:
             raise error
+
     return {"data": all_data}

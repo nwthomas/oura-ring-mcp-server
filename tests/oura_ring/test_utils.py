@@ -48,6 +48,17 @@ async def test_make_oura_ring_request_success(
         MagicMock()
     )  # Mock raise_for_status as a regular MagicMock
     client = mock_client.return_value
+    mocker.patch(
+        "src.oura_ring.utils.requests.post",
+        return_value=MagicMock(
+            json=MagicMock(
+                return_value={
+                    "access_token": "mock_access_token",
+                    "refresh_token": "mock_refresh_token",
+                }
+            )
+        ),
+    )
     try:
         response = await make_oura_ring_request(client, url, params)
         assert response is not None
@@ -63,5 +74,16 @@ async def test_make_oura_ring_request_error(mocker: pytest_mock.MockerFixture) -
     mock_client = mocker.patch("httpx.AsyncClient", new_callable=AsyncMock)
     mock_client.return_value.get.side_effect = raise_exception
     client = mock_client.return_value
+    mocker.patch(
+        "src.oura_ring.utils.requests.post",
+        return_value=MagicMock(
+            json=MagicMock(
+                return_value={
+                    "access_token": "mock_access_token",
+                    "refresh_token": "mock_refresh_token",
+                }
+            )
+        ),
+    )
     with pytest.raises(Exception):
         await make_oura_ring_request(client, url, params)

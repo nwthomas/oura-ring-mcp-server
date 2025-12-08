@@ -18,7 +18,7 @@ This repository contains a Model Context Protocol (MCP) implementation wrapping 
 
 ## Setup
 
-#### Oura Ring Application Setup
+### Oura Ring Application Setup
 
 You'll have to jump through a few hooks initially to authorize this server as an "app" with Oura Ring as well as to have access to your account, but it should be smooth sailing after initial setup.
 
@@ -44,9 +44,11 @@ After you do that, the `webhook.site` dashboard will update with a callback that
 
 ![webhook.site callback code example](./assets/webhook-site-callback-code.pn.png)
 
-Congratulations, you now have all the secrets setup you need locally to proceed with using the MCP server. The actual access/refresh token fetch is automatic when you're using the MCP server. However, if anything is broken with the token process, you can retry fetching your user code token (which we just did above) and set the updated version in your `.env` again.
+Congratulations, you now have all the secrets setup you need locally to proceed with using the MCP server. The actual access/refresh token fetch is automatic when you're using the MCP server.
 
-#### Server Setup
+> NOTE: If the `tokens.json` file - which stores your tokens locally and is _not_ checked into Git - gets deleted, you'll need to do this setup again. Oura Ring made it so that you can only get a `refresh_token` and `access_token` set from a user's code token once. Thereafter, you can only fetch new `access_token`s with the `refresh_token`. If you lose the `refresh_token`, it's game over and you'll have to do this setup again.
+
+### Server Setup
 
 First, you'll need to ensure that you have `uv` and the right Python versions.
 
@@ -93,11 +95,11 @@ Finally, you can run the project with the following command:
 make run
 ```
 
-#### Claude Desktop Setup
+### Claude Desktop Setup
 
-This MCP server is currently setup to be run/accessed by a model locally (on your local computer with something like [Claude Desktop](https://claude.com/download)). I will eventually wire up a Docker build process, but you can follow the [Anthropic local MCP server](https://modelcontextprotocol.io/docs/develop/connect-local-servers) setup options until then to run it locally. It will integrate with any LLM that has MCP client wrappers setup.
+This MCP server is currently setup to be run/accessed by a model locally (on your local computer with something like [Claude Desktop](https://claude.com/download)). You can follow the [Anthropic local MCP server](https://modelcontextprotocol.io/docs/develop/connect-local-servers) setup options to run it locally. It will integrate with any LLM that has MCP client wrappers setup.
 
-In order to use this MCP server, you will need to register with the Oura Ring developer portal and get your own keys to plug into a `.env` file (copied over from the `.env.example`). This repo is currently using the Personal Access Token (PAT), but Oura Ring has plans to deprecate this at the end of 2025.
+In order to use this MCP server, you will need to register with the Oura Ring developer portal and get your own keys to plug into a `.env` file (copied over from the `.env.example`). See earlier steps in this `README` file for that.
 
 If you're using [Claude Desktop](https://claude.com/download), you can easily set up the connection to this repo (after adding the appropriate environment variables to your `.env` file) by [following this guide](https://modelcontextprotocol.io/docs/develop/connect-local-servers). For brevity, here's a snippet you can add to your `claude_desktop_config.json` file that will work for this repository:
 

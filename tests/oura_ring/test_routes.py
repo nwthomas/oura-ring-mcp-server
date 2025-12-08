@@ -18,6 +18,23 @@ from src.oura_ring.routes import (
     get_oura_ring_personal_information,
 )
 from unittest.mock import AsyncMock, MagicMock
+import pytest_mock
+
+
+@pytest.fixture(autouse=True)
+def mock_requests_post(mocker: pytest_mock.MockerFixture):
+    """Fixture to mock requests.post in all tests."""
+    return mocker.patch(
+        "src.oura_ring.utils.requests.post",
+        return_value=MagicMock(
+            json=MagicMock(
+                return_value={
+                    "access_token": "mock_access_token",
+                    "refresh_token": "mock_refresh_token",
+                }
+            ),
+        ),
+    )
 
 
 @pytest.mark.asyncio
