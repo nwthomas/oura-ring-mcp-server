@@ -1,4 +1,4 @@
-> NOTE: This project has been updated to use OAuth2 ahead of Oura Ring's deprecation of Personal Access Tokens (PATs). This means your MCP will work into 2026 (and beyond) after following the setup steps.
+> NOTE: This project has been updated to use OAuth2 ahead of Oura Ring's deprecation of Personal Access Tokens (PATs). Because of that, this MCP will work for you into 2026 (and beyond) after following the setup steps.
 
 # Oura Ring MCP Server
 
