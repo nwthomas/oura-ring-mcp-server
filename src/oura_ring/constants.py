@@ -1,4 +1,5 @@
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -9,11 +10,16 @@ SERVER_TIMEOUT_SECONDS = 5.0
 
 # Oura Ring constants and secrets
 OURA_RING_API_BASE = "https://api.ouraring.com"
+OURA_RING_OAUTH_TOKEN_URL = os.getenv(
+    "OURA_RING_OAUTH_TOKEN_URL",
+    f"{OURA_RING_API_BASE}/oauth/token",
+)
 
 # !IMPORTANT: Follow the directions in the README.md file to get this token process setup
 OURA_RING_USER_CODE = os.getenv("OURA_RING_USER_CODE", "")
 OURA_RING_CLIENT_ID = os.getenv("OURA_RING_CLIENT_ID", "")
 OURA_RING_CLIENT_SECRET = os.getenv("OURA_RING_CLIENT_SECRET", "")
+OURA_RING_REDIRECT_URI = os.getenv("OURA_RING_REDIRECT_URI", "")
 
 # For storing tokens locally against future MCP server runs
 OURA_RING_TOKEN_FILE_NAME = "tokens.json"

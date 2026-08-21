@@ -7,7 +7,6 @@ This repository contains a Model Context Protocol (MCP) implementation wrapping 
 ## Table of Contents
 
 - [Setup](#setup)
-
   - [Oura Ring Application Setup](#oura-ring-application-setup)
   - [Server Setup](#server-setup)
   - [Claude Desktop Setup](#claude-desktop-setup)
@@ -40,13 +39,17 @@ Then, copy the `Example Authorization Url` from the Oura Ring Application Dashbo
 
 ![Oura Ring Connect with Oura](./assets/oura-ring-submit-consent.pn.png)
 
-After you do that, the `webhook.site` dashboard will update with a callback that just got made to their service. Grab the `code` from that (below is a non-functional example token) and set it as the `OURA_RING_USER_CODE` value:
+After you do that, the `webhook.site` dashboard will update with a callback that just got made to their service. Grab the `code` from that (below is a non-functional example token) and set it as the `OURA_RING_USER_CODE` value. Also set `OURA_RING_REDIRECT_URI` to the exact redirect URI you registered with Oura and used in the authorization URL:
 
 ![webhook.site callback code example](./assets/webhook-site-callback-code.pn.png)
 
 Congratulations, you now have all the secrets setup you need locally to proceed with using the MCP server. The actual access/refresh token fetch is automatic when you're using the MCP server.
 
-> NOTE: If the `tokens.json` file - which stores your tokens locally and is _not_ checked into Git - gets deleted, you'll need to do this setup again. Oura Ring made it so that you can only get a `refresh_token` and `access_token` set from a user's code token once. Thereafter, you can only fetch new `access_token`s with the `refresh_token`. If you lose the `refresh_token`, it's game over and you'll have to do this setup again.
+By default, token exchange and refresh use Oura's documented token endpoint: `https://api.ouraring.com/oauth/token`. If Oura changes the token endpoint for your application, you can override that with `OURA_RING_OAUTH_TOKEN_URL`.
+
+`OURA_RING_REDIRECT_URI` is used for the initial authorization-code exchange only. Refresh requests do not send `redirect_uri`.
+
+> NOTE: If the `tokens.json` file - which stores your tokens locally and is _not_ checked into Git - gets deleted, you'll need to do this setup again. Oura Ring made it so that you can only get a `refresh_token` and `access_token` set from a user's code token once. Thereafter, you can fetch new token pairs with the `refresh_token`. Oura refresh tokens rotate, so every successful refresh returns a replacement `refresh_token` and invalidates the previous one. If you lose the latest `refresh_token`, you'll have to do this setup again.
 
 ### Server Setup
 

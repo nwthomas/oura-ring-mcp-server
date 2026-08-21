@@ -1,17 +1,23 @@
+from unittest.mock import AsyncMock, MagicMock
+
 import pytest
 import pytest_mock
-from httpx import AsyncClient
+
 from src.oura_ring.utils import (
+    OuraRingAuthError,
     build_oura_ring_request_headers,
     build_oura_ring_request_params,
+    fetch_tokens,
+    get_refresh_token,
     make_oura_ring_request,
+    refresh_access_token,
+    set_tokens,
 )
-from unittest.mock import AsyncMock, MagicMock
 
 
 @pytest.mark.asyncio
-async def raise_exception():
-    raise Exception("Mocked exception")
+async def raise_runtime_error(*_args, **_kwargs):
+    raise RuntimeError("Mocked exception")
 
 
 def test_build_oura_ring_request_headers() -> None:
@@ -37,53 +43,128 @@ def test_build_oura_ring_request_params_filter_none_values() -> None:
 
 @pytest.mark.asyncio
 async def test_make_oura_ring_request_success(
-    mocker: pytest_mock.MockerFixture,
+    mocker: pytest_mock.MockerFixture, mock_token_response: MagicMock
 ) -> None:
     url = "https://api.ouraring.com/v2/usercollection/daily_activity"
     params = {"start_date": "2025-09-04", "end_date": "2025-09-04"}
     mock_client = mocker.patch("httpx.AsyncClient", new_callable=AsyncMock)
     mock_response = mock_client.return_value.get.return_value
     mock_response.json = MagicMock(return_value={"data": [{"mocked_data": "value"}]})
-    mock_response.raise_for_status = (
-        MagicMock()
-    )  # Mock raise_for_status as a regular MagicMock
-    client = mock_client.return_value
-    mocker.patch(
-        "src.oura_ring.utils.requests.post",
-        return_value=MagicMock(
-            json=MagicMock(
-                return_value={
-                    "access_token": "mock_access_token",
-                    "refresh_token": "mock_refresh_token",
-                }
-            )
-        ),
-    )
-    try:
-        response = await make_oura_ring_request(client, url, params)
-        assert response is not None
-        assert "data" in response
-    except Exception:
-        assert False
+    mock_response.raise_for_status = MagicMock()
+    mocker.patch("src.oura_ring.utils.requests.post", return_value=mock_token_response)
+
+    response = await make_oura_ring_request(mock_client.return_value, url, params)
+
+    assert response is not None
+    assert "data" in response
 
 
 @pytest.mark.asyncio
-async def test_make_oura_ring_request_error(mocker: pytest_mock.MockerFixture) -> None:
+async def test_make_oura_ring_request_error(
+    mocker: pytest_mock.MockerFixture, mock_token_response: MagicMock
+) -> None:
     url = "https://api.ouraring.com/v2/usercollection/daily_activity"
     params = {"start_date": "2025-09-05", "end_date": "2025-09-04"}
     mock_client = mocker.patch("httpx.AsyncClient", new_callable=AsyncMock)
-    mock_client.return_value.get.side_effect = raise_exception
-    client = mock_client.return_value
+    mock_client.return_value.get.side_effect = raise_runtime_error
+    mocker.patch("src.oura_ring.utils.requests.post", return_value=mock_token_response)
+
+    with pytest.raises(RuntimeError):
+        await make_oura_ring_request(mock_client.return_value, url, params)
+
+
+@pytest.mark.asyncio
+async def test_fetch_tokens_includes_redirect_uri(
+    mocker: pytest_mock.MockerFixture, mock_token_response: MagicMock
+) -> None:
+    mock_post = mocker.patch(
+        "src.oura_ring.utils.requests.post", return_value=mock_token_response
+    )
+    mocker.patch("src.oura_ring.utils.OURA_RING_REDIRECT_URI", "https://example.test")
+
+    await fetch_tokens()
+
+    payload = mock_post.call_args.kwargs["data"]
+    assert payload["grant_type"] == "authorization_code"
+    assert payload["redirect_uri"] == "https://example.test"
+
+
+@pytest.mark.asyncio
+async def test_refresh_access_token_excludes_redirect_uri(
+    mocker: pytest_mock.MockerFixture, mock_token_response: MagicMock
+) -> None:
+    set_tokens("stale_access", "stale_refresh")
+    mock_post = mocker.patch(
+        "src.oura_ring.utils.requests.post", return_value=mock_token_response
+    )
+
+    await refresh_access_token()
+
+    payload = mock_post.call_args.kwargs["data"]
+    assert payload["grant_type"] == "refresh_token"
+    assert payload["refresh_token"] == "stale_refresh"
+    assert "redirect_uri" not in payload
+
+
+@pytest.mark.asyncio
+async def test_refresh_access_token_raises_on_invalid_grant(
+    mocker: pytest_mock.MockerFixture,
+) -> None:
+    set_tokens("stale_access", "stale_refresh")
     mocker.patch(
         "src.oura_ring.utils.requests.post",
         return_value=MagicMock(
+            status_code=400,
             json=MagicMock(
                 return_value={
-                    "access_token": "mock_access_token",
-                    "refresh_token": "mock_refresh_token",
+                    "error": "invalid_grant",
+                    "error_description": "Refresh token is invalid.",
                 }
-            )
+            ),
         ),
     )
-    with pytest.raises(Exception):
-        await make_oura_ring_request(client, url, params)
+
+    with pytest.raises(OuraRingAuthError, match="invalid_grant"):
+        await refresh_access_token()
+
+    assert get_refresh_token() is None
+
+
+@pytest.mark.asyncio
+async def test_refresh_access_token_keeps_tokens_on_invalid_client(
+    mocker: pytest_mock.MockerFixture,
+) -> None:
+    set_tokens("stale_access", "stale_refresh")
+    mocker.patch(
+        "src.oura_ring.utils.requests.post",
+        return_value=MagicMock(
+            status_code=400,
+            json=MagicMock(
+                return_value={
+                    "error": "invalid_client",
+                    "error_description": "Client credentials are invalid.",
+                }
+            ),
+        ),
+    )
+
+    with pytest.raises(OuraRingAuthError, match="invalid_client"):
+        await refresh_access_token()
+
+    assert get_refresh_token() == "stale_refresh"
+
+
+@pytest.mark.asyncio
+async def test_make_oura_ring_request_returns_bare_object_for_personal_info(
+    mocker: pytest_mock.MockerFixture,
+) -> None:
+    url = "https://api.ouraring.com/v2/usercollection/personal_info"
+    set_tokens("access", "refresh")
+    mock_client = mocker.patch("httpx.AsyncClient", new_callable=AsyncMock)
+    mock_response = mock_client.return_value.get.return_value
+    mock_response.json = MagicMock(return_value={"id": "abc", "age": 31})
+    mock_response.raise_for_status = MagicMock()
+
+    response = await make_oura_ring_request(mock_client.return_value, url)
+
+    assert response == {"id": "abc", "age": 31}

@@ -1,6 +1,9 @@
-from mcp.server.fastmcp import FastMCP
-from src.mcp.constants import SERVER_NAME, SERVER_PORT
+import sys
 from typing import Any
+
+from mcp.server.fastmcp import FastMCP
+
+from src.mcp.constants import SERVER_NAME, SERVER_PORT
 from src.oura_ring.routes import (
     get_oura_ring_daily_cardiovascular_age,
     get_oura_ring_multiple_daily_activity,
@@ -11,12 +14,12 @@ from src.oura_ring.routes import (
     get_oura_ring_multiple_daily_stress,
     get_oura_ring_multiple_enhanced_tags,
     get_oura_ring_multiple_heart_rate,
-    get_oura_ring_multiple_sleep_routes,
     get_oura_ring_multiple_session_routes,
-    get_oura_ring_personal_information,
+    get_oura_ring_multiple_sleep_routes,
     get_oura_ring_multiple_sleep_time,
     get_oura_ring_multiple_vo2_max,
     get_oura_ring_multiple_workout,
+    get_oura_ring_personal_information,
 )
 
 # Main MCP server which will run on stdio transport
@@ -237,5 +240,5 @@ async def get_workout(start_date: str, end_date: str) -> dict[str, Any]:
 
 def start_server():
     """Start the MCP server using the stdio transport."""
-    print(f"Starting {SERVER_NAME} on port {SERVER_PORT}")
+    print(f"Starting {SERVER_NAME} on port {SERVER_PORT}", file=sys.stderr)
     mcp.run(transport="stdio")

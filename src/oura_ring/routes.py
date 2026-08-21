@@ -1,7 +1,9 @@
+from typing import Any
+
+from httpx import AsyncClient
+
 from .constants import OURA_RING_API_BASE
 from .utils import build_oura_ring_request_params, make_oura_ring_request
-from httpx import AsyncClient
-from typing import Any
 
 
 async def get_oura_ring_multiple_daily_activity(
