@@ -1,5 +1,8 @@
 from unittest.mock import AsyncMock, MagicMock
 
+import stat
+from pathlib import Path
+
 import pytest
 import pytest_mock
 
@@ -11,6 +14,7 @@ from src.oura_ring.utils import (
     get_refresh_token,
     make_oura_ring_request,
     refresh_access_token,
+    save_tokens,
     set_tokens,
 )
 
@@ -168,3 +172,24 @@ async def test_make_oura_ring_request_returns_bare_object_for_personal_info(
     response = await make_oura_ring_request(mock_client.return_value, url)
 
     assert response == {"id": "abc", "age": 31}
+
+
+@pytest.mark.asyncio
+async def test_fetch_tokens_missing_credentials(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr("src.oura_ring.utils.OURA_RING_CLIENT_ID", "")
+
+    with pytest.raises(OuraRingAuthError, match="OURA_RING_CLIENT_ID"):
+        await fetch_tokens()
+
+
+def test_save_tokens_sets_restricted_permissions() -> None:
+    """OAuth tokens on disk must be readable only by the owner."""
+    set_tokens("test_access", "test_refresh")
+    save_tokens()
+
+    from src.oura_ring.utils import OURA_RING_TOKEN_FILE_NAME
+
+    mode = stat.S_IMODE(Path(OURA_RING_TOKEN_FILE_NAME).stat().st_mode)
+    assert mode == 0o600

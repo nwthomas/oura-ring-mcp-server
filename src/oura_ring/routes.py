@@ -6,11 +6,27 @@ from .constants import OURA_RING_API_BASE
 from .utils import build_oura_ring_request_params, make_oura_ring_request
 
 
+_SHARED_HTTPX_CLIENT: AsyncClient | None = None
+
+
+def get_shared_httpx_client() -> AsyncClient:
+    """Lazily create the process-wide httpx client reused for the server lifetime."""
+    global _SHARED_HTTPX_CLIENT
+    if _SHARED_HTTPX_CLIENT is None:
+        _SHARED_HTTPX_CLIENT = AsyncClient()
+    return _SHARED_HTTPX_CLIENT
+
+
+def _resolve_client(client: AsyncClient | None) -> AsyncClient:
+    """Return the provided client or the process-wide shared client."""
+    return client if client is not None else get_shared_httpx_client()
+
+
 async def get_oura_ring_multiple_daily_activity(
     start_date: str,
     end_date: str,
     next_token: str | None = None,
-    client: AsyncClient = AsyncClient(),
+    client: AsyncClient | None = None,
 ) -> dict[str, Any]:
     """Get multiple daily activity values for a given date range."""
     url = f"{OURA_RING_API_BASE}/v2/usercollection/daily_activity"
@@ -21,14 +37,14 @@ async def get_oura_ring_multiple_daily_activity(
             "next_token": next_token,
         }
     )
-    return await make_oura_ring_request(client, url, params)
+    return await make_oura_ring_request(_resolve_client(client), url, params)
 
 
 async def get_oura_ring_daily_cardiovascular_age(
     start_date: str,
     end_date: str,
     next_token: str | None = None,
-    client: AsyncClient = AsyncClient(),
+    client: AsyncClient | None = None,
 ) -> dict[str, Any]:
     """Get the daily cardiovascular age for a given date range."""
     url = f"{OURA_RING_API_BASE}/v2/usercollection/daily_cardiovascular_age"
@@ -39,14 +55,14 @@ async def get_oura_ring_daily_cardiovascular_age(
             "next_token": next_token,
         }
     )
-    return await make_oura_ring_request(client, url, params)
+    return await make_oura_ring_request(_resolve_client(client), url, params)
 
 
 async def get_oura_ring_multiple_daily_readiness(
     start_date: str,
     end_date: str,
     next_token: str | None = None,
-    client: AsyncClient = AsyncClient(),
+    client: AsyncClient | None = None,
 ) -> dict[str, Any]:
     """Get multiple daily readiness scoresfor a given date range."""
     url = f"{OURA_RING_API_BASE}/v2/usercollection/daily_readiness"
@@ -57,14 +73,14 @@ async def get_oura_ring_multiple_daily_readiness(
             "next_token": next_token,
         }
     )
-    return await make_oura_ring_request(client, url, params)
+    return await make_oura_ring_request(_resolve_client(client), url, params)
 
 
 async def get_oura_ring_multiple_daily_resilience(
     start_date: str,
     end_date: str,
     next_token: str | None = None,
-    client: AsyncClient = AsyncClient(),
+    client: AsyncClient | None = None,
 ) -> dict[str, Any]:
     """Get multiple daily resilience scores for a given date range."""
     url = f"{OURA_RING_API_BASE}/v2/usercollection/daily_resilience"
@@ -75,14 +91,14 @@ async def get_oura_ring_multiple_daily_resilience(
             "next_token": next_token,
         }
     )
-    return await make_oura_ring_request(client, url, params)
+    return await make_oura_ring_request(_resolve_client(client), url, params)
 
 
 async def get_oura_ring_multiple_daily_sleep(
     start_date: str,
     end_date: str,
     next_token: str | None = None,
-    client: AsyncClient = AsyncClient(),
+    client: AsyncClient | None = None,
 ) -> dict[str, Any]:
     """Get multiple daily sleep values for a given date range."""
     url = f"{OURA_RING_API_BASE}/v2/usercollection/daily_sleep"
@@ -93,14 +109,14 @@ async def get_oura_ring_multiple_daily_sleep(
             "next_token": next_token,
         }
     )
-    return await make_oura_ring_request(client, url, params)
+    return await make_oura_ring_request(_resolve_client(client), url, params)
 
 
 async def get_oura_ring_multiple_daily_spo2(
     start_date: str,
     end_date: str,
     next_token: str | None = None,
-    client: AsyncClient = AsyncClient(),
+    client: AsyncClient | None = None,
 ) -> dict[str, Any]:
     """Get multiple daily spo2 values for a given date range."""
     url = f"{OURA_RING_API_BASE}/v2/usercollection/daily_spo2"
@@ -111,14 +127,14 @@ async def get_oura_ring_multiple_daily_spo2(
             "next_token": next_token,
         }
     )
-    return await make_oura_ring_request(client, url, params)
+    return await make_oura_ring_request(_resolve_client(client), url, params)
 
 
 async def get_oura_ring_multiple_daily_stress(
     start_date: str,
     end_date: str,
     next_token: str | None = None,
-    client: AsyncClient = AsyncClient(),
+    client: AsyncClient | None = None,
 ) -> dict[str, Any]:
     """Get multiple daily stress values for a given date range."""
     url = f"{OURA_RING_API_BASE}/v2/usercollection/daily_stress"
@@ -129,14 +145,14 @@ async def get_oura_ring_multiple_daily_stress(
             "next_token": next_token,
         }
     )
-    return await make_oura_ring_request(client, url, params)
+    return await make_oura_ring_request(_resolve_client(client), url, params)
 
 
 async def get_oura_ring_multiple_enhanced_tags(
     start_date: str,
     end_date: str,
     next_token: str | None = None,
-    client: AsyncClient = AsyncClient(),
+    client: AsyncClient | None = None,
 ) -> dict[str, Any]:
     """Get multiple daily enhanced tags for a given date range."""
     url = f"{OURA_RING_API_BASE}/v2/usercollection/enhanced_tag"
@@ -147,14 +163,14 @@ async def get_oura_ring_multiple_enhanced_tags(
             "next_token": next_token,
         }
     )
-    return await make_oura_ring_request(client, url, params)
+    return await make_oura_ring_request(_resolve_client(client), url, params)
 
 
 async def get_oura_ring_multiple_heart_rate(
     start_date: str,
     end_date: str,
     next_token: str | None = None,
-    client: AsyncClient = AsyncClient(),
+    client: AsyncClient | None = None,
 ) -> dict[str, Any]:
     """Get multiple daily heart rate values for a given date range."""
     url = f"{OURA_RING_API_BASE}/v2/usercollection/heartrate"
@@ -165,22 +181,22 @@ async def get_oura_ring_multiple_heart_rate(
             "next_token": next_token,
         }
     )
-    return await make_oura_ring_request(client, url, params)
+    return await make_oura_ring_request(_resolve_client(client), url, params)
 
 
 async def get_oura_ring_personal_information(
-    client: AsyncClient = AsyncClient(),
+    client: AsyncClient | None = None,
 ) -> dict[str, Any]:
     """Get personal information."""
     url = f"{OURA_RING_API_BASE}/v2/usercollection/personal_info"
-    return await make_oura_ring_request(client, url)
+    return await make_oura_ring_request(_resolve_client(client), url)
 
 
 async def get_oura_ring_multiple_session_routes(
     start_date: str,
     end_date: str,
     next_token: str | None = None,
-    client: AsyncClient = AsyncClient(),
+    client: AsyncClient | None = None,
 ) -> dict[str, Any]:
     """Get session routes for a given date range."""
     url = f"{OURA_RING_API_BASE}/v2/usercollection/session"
@@ -191,14 +207,14 @@ async def get_oura_ring_multiple_session_routes(
             "next_token": next_token,
         }
     )
-    return await make_oura_ring_request(client, url, params)
+    return await make_oura_ring_request(_resolve_client(client), url, params)
 
 
 async def get_oura_ring_multiple_sleep_routes(
     start_date: str,
     end_date: str,
     next_token: str | None = None,
-    client: AsyncClient = AsyncClient(),
+    client: AsyncClient | None = None,
 ) -> dict[str, Any]:
     """Get sleep routes for a given date range."""
     url = f"{OURA_RING_API_BASE}/v2/usercollection/sleep"
@@ -209,14 +225,14 @@ async def get_oura_ring_multiple_sleep_routes(
             "next_token": next_token,
         }
     )
-    return await make_oura_ring_request(client, url, params)
+    return await make_oura_ring_request(_resolve_client(client), url, params)
 
 
 async def get_oura_ring_multiple_sleep_time(
     start_date: str,
     end_date: str,
     next_token: str | None = None,
-    client: AsyncClient = AsyncClient(),
+    client: AsyncClient | None = None,
 ) -> dict[str, Any]:
     """Get sleep time for a given date range."""
     url = f"{OURA_RING_API_BASE}/v2/usercollection/sleep_time"
@@ -227,14 +243,14 @@ async def get_oura_ring_multiple_sleep_time(
             "next_token": next_token,
         }
     )
-    return await make_oura_ring_request(client, url, params)
+    return await make_oura_ring_request(_resolve_client(client), url, params)
 
 
 async def get_oura_ring_multiple_vo2_max(
     start_date: str,
     end_date: str,
     next_token: str | None = None,
-    client: AsyncClient = AsyncClient(),
+    client: AsyncClient | None = None,
 ) -> dict[str, Any]:
     """Get vo2 max for a given date range."""
     url = f"{OURA_RING_API_BASE}/v2/usercollection/vO2_max"
@@ -245,14 +261,14 @@ async def get_oura_ring_multiple_vo2_max(
             "next_token": next_token,
         }
     )
-    return await make_oura_ring_request(client, url, params)
+    return await make_oura_ring_request(_resolve_client(client), url, params)
 
 
 async def get_oura_ring_multiple_workout(
     start_date: str,
     end_date: str,
     next_token: str | None = None,
-    client: AsyncClient = AsyncClient(),
+    client: AsyncClient | None = None,
 ) -> dict[str, Any]:
     """Get workout for a given date range."""
     url = f"{OURA_RING_API_BASE}/v2/usercollection/workout"
@@ -263,4 +279,4 @@ async def get_oura_ring_multiple_workout(
             "next_token": next_token,
         }
     )
-    return await make_oura_ring_request(client, url, params)
+    return await make_oura_ring_request(_resolve_client(client), url, params)

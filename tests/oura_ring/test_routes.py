@@ -452,3 +452,18 @@ async def test_get_oura_ring_multiple_workout_error(mocker):
         await get_oura_ring_multiple_workout(
             client=client, start_date="test-error-start", end_date="test-error-end"
         )
+
+
+@pytest.mark.asyncio
+async def test_route_uses_shared_client_when_client_omitted(mocker):
+    """Routes must reuse one process-wide client instead of leaking new ones."""
+    shared_client = mocker.patch("src.oura_ring.routes.get_shared_httpx_client")
+    mock_make = mocker.patch(
+        "src.oura_ring.routes.make_oura_ring_request", new_callable=AsyncMock
+    )
+
+    await get_oura_ring_multiple_daily_activity(
+        start_date="2025-01-01", end_date="2025-01-01"
+    )
+
+    assert mock_make.call_args.args[0] is shared_client.return_value

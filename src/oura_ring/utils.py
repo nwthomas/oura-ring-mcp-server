@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+import anyio
 import requests
 from httpx import AsyncClient, HTTPStatusError
 
@@ -24,6 +25,7 @@ from src.oura_ring.constants import (
 # Cached in-memory tokens during current server runtime
 TOKENS = {}
 TOKEN_REFRESH_LOCK = asyncio.Lock()
+TOKENS_LOAD_LOCK = asyncio.Lock()
 
 
 class OuraRingAuthError(RuntimeError):
@@ -36,20 +38,23 @@ class OuraRingAuthError(RuntimeError):
 
 async def load_or_fetch_tokens():
     """Load tokens from disk, or exchange the configured auth code on first run."""
-    if get_access_token() is not None and get_refresh_token() is not None:
-        return
+    # Serialized so concurrent first requests cannot both exchange the
+    # single-use OURA_RING_USER_CODE.
+    async with TOKENS_LOAD_LOCK:
+        if get_access_token() is not None and get_refresh_token() is not None:
+            return
 
-    try:
-        with open(OURA_RING_TOKEN_FILE_NAME, "r", encoding="utf-8") as token_file:
+        try:
+            with open(OURA_RING_TOKEN_FILE_NAME, "r", encoding="utf-8") as token_file:
+                TOKENS.clear()
+                TOKENS.update(json.load(token_file))
+        except FileNotFoundError:
             TOKENS.clear()
-            TOKENS.update(json.load(token_file))
-    except FileNotFoundError:
-        TOKENS.clear()
 
-    print(f"Tokens loaded from file (present: {bool(TOKENS)})", file=sys.stderr)
+        print(f"Tokens loaded from file (present: {bool(TOKENS)})", file=sys.stderr)
 
-    if get_access_token() is None or get_refresh_token() is None:
-        await fetch_tokens()
+        if get_access_token() is None or get_refresh_token() is None:
+            await fetch_tokens()
 
 
 def save_tokens():
@@ -59,6 +64,8 @@ def save_tokens():
 
     with open(temporary_path, "w", encoding="utf-8") as token_file:
         json.dump(TOKENS, token_file)
+    # Tokens are secrets: keep them readable only by the owner.
+    os.chmod(temporary_path, 0o600)
     os.replace(temporary_path, token_path)
 
 
@@ -120,6 +127,22 @@ def _post_token_request(payload: dict[str, Any]) -> dict[str, Any]:
     return data
 
 
+def _require_credentials(require_user_code: bool = False) -> None:
+    """Fail fast with a clear error when required OAuth env vars are unset."""
+    missing = []
+    if not OURA_RING_CLIENT_ID:
+        missing.append("OURA_RING_CLIENT_ID")
+    if not OURA_RING_CLIENT_SECRET:
+        missing.append("OURA_RING_CLIENT_SECRET")
+    if require_user_code and not OURA_RING_USER_CODE:
+        missing.append("OURA_RING_USER_CODE")
+    if missing:
+        raise OuraRingAuthError(
+            f"Missing required environment variable(s): {', '.join(missing)}. "
+            "See the README for the OAuth2 setup steps."
+        )
+
+
 def _require_token_pair(data: dict[str, Any], action: str) -> tuple[str, str]:
     """Extract a token pair or raise a clear error."""
     if (
@@ -135,6 +158,7 @@ def _require_token_pair(data: dict[str, Any], action: str) -> tuple[str, str]:
 
 async def fetch_tokens():
     """Fetch tokens from Oura Ring API."""
+    _require_credentials(require_user_code=True)
     payload = {
         "grant_type": "authorization_code",
         "code": OURA_RING_USER_CODE,
@@ -145,7 +169,8 @@ async def fetch_tokens():
         payload["redirect_uri"] = OURA_RING_REDIRECT_URI
 
     access_token, refresh_token = _require_token_pair(
-        _post_token_request(payload), "authorization-code exchange"
+        await anyio.to_thread.run_sync(_post_token_request, payload),
+        "authorization-code exchange",
     )
     set_tokens(access_token, refresh_token)
     save_tokens()
@@ -153,19 +178,21 @@ async def fetch_tokens():
 
 async def refresh_access_token():
     """Refresh and persist the access/refresh token pair."""
+    _require_credentials()
     async with TOKEN_REFRESH_LOCK:
         if get_refresh_token() is None:
             await load_or_fetch_tokens()
 
         try:
             access_token, refresh_token = _require_token_pair(
-                _post_token_request(
+                await anyio.to_thread.run_sync(
+                    _post_token_request,
                     {
                         "grant_type": "refresh_token",
                         "refresh_token": get_refresh_token(),
                         "client_id": OURA_RING_CLIENT_ID,
                         "client_secret": OURA_RING_CLIENT_SECRET,
-                    }
+                    },
                 ),
                 "refresh",
             )

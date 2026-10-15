@@ -3,7 +3,7 @@ from typing import Any
 
 from mcp.server.fastmcp import FastMCP
 
-from src.mcp.constants import SERVER_NAME, SERVER_PORT
+from src.mcp.constants import SERVER_NAME
 from src.oura_ring.routes import (
     get_oura_ring_daily_cardiovascular_age,
     get_oura_ring_multiple_daily_activity,
@@ -23,7 +23,7 @@ from src.oura_ring.routes import (
 )
 
 # Main MCP server which will run on stdio transport
-mcp = FastMCP(name=SERVER_NAME, port=SERVER_PORT)
+mcp = FastMCP(name=SERVER_NAME)
 
 
 @mcp.tool()
@@ -240,5 +240,5 @@ async def get_workout(start_date: str, end_date: str) -> dict[str, Any]:
 
 def start_server():
     """Start the MCP server using the stdio transport."""
-    print(f"Starting {SERVER_NAME} on port {SERVER_PORT}", file=sys.stderr)
+    print(f"Starting {SERVER_NAME} on the stdio transport", file=sys.stderr)
     mcp.run(transport="stdio")

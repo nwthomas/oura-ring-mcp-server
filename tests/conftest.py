@@ -12,6 +12,10 @@ def isolate_token_file(tmp_path, monkeypatch):
         utils, "OURA_RING_TOKEN_FILE_NAME", str(tmp_path / "tokens.json")
     )
     monkeypatch.setattr(utils, "TOKENS", {})
+    # Dummy OAuth credentials so mocked tests pass credential validation.
+    monkeypatch.setattr(utils, "OURA_RING_CLIENT_ID", "test_client_id")
+    monkeypatch.setattr(utils, "OURA_RING_CLIENT_SECRET", "test_client_secret")
+    monkeypatch.setattr(utils, "OURA_RING_USER_CODE", "test_user_code")
 
 
 @pytest.fixture
